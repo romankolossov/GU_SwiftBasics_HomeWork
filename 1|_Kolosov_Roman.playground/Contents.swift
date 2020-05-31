@@ -53,15 +53,27 @@ print("Вычисление корней квадратного уравнени
 
 let roots = squareEquationSolver(coefficientA: a, coefficientB: b, coefficientC: c)
 
-if (roots.0 != nil) && (roots.1 != nil) {
+switch roots {
+case (_,_) where (roots.0 != nil) && (roots.1 != nil) :
     print("Уравнение имеет два различных корня:")
     print("x1 = \(roots.0!)\nx2 = \(roots.1!)")
-} else if (roots.0 != nil) && (roots.1 == nil) {
-    print("Уравнение имеет один корень:")
-    print("x1 = \(roots.0!)")
-} else if (roots.0 == nil) && (roots.1 == nil) {
+case (_,nil) where (roots.0 != nil) :
+     print("Уравнение имеет один корень:")
+     print("x1 = \(roots.0!)")
+default:
     print("Уравнение не имеет действительных корней.")
 }
+
+
+//if (roots.0 != nil) && (roots.1 != nil) {
+//    print("Уравнение имеет два различных корня:")
+//    print("x1 = \(roots.0!)\nx2 = \(roots.1!)")
+//} else if (roots.0 != nil) && (roots.1 == nil) {
+//    print("Уравнение имеет один корень:")
+//    print("x1 = \(roots.0!)")
+//} else if (roots.0 == nil) && (roots.1 == nil) {
+//    print("Уравнение не имеет действительных корней.")
+//}
 
 
 
