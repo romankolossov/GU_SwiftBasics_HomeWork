@@ -5,10 +5,10 @@
 
 import UIKit
 
-// MARK: Задание 1
+// MARK: Задание 1. Сданное решение.
 // Решение квадратного уравнения.
 //
-
+/*
 func squareEquationSolver(coefficientA a : Double, coefficientB b: Double, coefficientC c : Double) -> (Double?, Double?) {
     
     var x1, x2 : Double?
@@ -53,27 +53,81 @@ print("Вычисление корней квадратного уравнени
 
 let roots = squareEquationSolver(coefficientA: a, coefficientB: b, coefficientC: c)
 
-switch roots {
-case (_,_) where (roots.0 != nil) && (roots.1 != nil) :
+//switch roots {
+//case (_,_) where (roots.0 != nil) && (roots.1 != nil) :
+//    print("Уравнение имеет два различных корня:")
+//    print("x1 = \(roots.0!)\nx2 = \(roots.1!)")
+//case (_,nil) where (roots.0 != nil) :
+//     print("Уравнение имеет один корень:")
+//     print("x1 = \(roots.0!)")
+//default:
+//    print("Уравнение не имеет действительных корней.")
+//}
+
+
+if (roots.0 != nil) && (roots.1 != nil) {
     print("Уравнение имеет два различных корня:")
     print("x1 = \(roots.0!)\nx2 = \(roots.1!)")
-case (_,nil) where (roots.0 != nil) :
-     print("Уравнение имеет один корень:")
-     print("x1 = \(roots.0!)")
-default:
+} else if (roots.0 != nil) && (roots.1 == nil) {
+    print("Уравнение имеет один корень:")
+    print("x1 = \(roots.0!)")
+} else if (roots.0 == nil) && (roots.1 == nil) {
     print("Уравнение не имеет действительных корней.")
 }
 
+*/
 
-//if (roots.0 != nil) && (roots.1 != nil) {
-//    print("Уравнение имеет два различных корня:")
-//    print("x1 = \(roots.0!)\nx2 = \(roots.1!)")
-//} else if (roots.0 != nil) && (roots.1 == nil) {
-//    print("Уравнение имеет один корень:")
-//    print("x1 = \(roots.0!)")
-//} else if (roots.0 == nil) && (roots.1 == nil) {
-//    print("Уравнение не имеет действительных корней.")
-//}
+
+// MARK: Задание 1. Работа над ошибками.
+// Решение квадратного уравнения.
+//
+
+func squareEquationSolver(coefficientA a : Double, coefficientB b: Double, coefficientC c : Double) -> [Double] {
+    
+    let discriminant = pow(b, Double(2)) - 4 * a * c
+    
+    if (a == 0) {
+        return [-(c / b)]
+    } else if (discriminant > 0) {
+        return [(-b + sqrt(discriminant)) / (2 * a), (-b - sqrt(discriminant)) / (2 * a)]
+    } else if (discriminant == 0) {
+        return [-(b / (2 * a))]
+    } else {
+        return []
+    }
+}
+
+
+// Ввод коэффициентов квадратного уравнения ax2 + bx + c = 0
+// Коэффициенты для проверки. Уравнение имеет два различных корня.
+let a : Double = 5
+let b : Double = 88
+let c : Double = 8
+
+// Коэффициенты для проверки. Уравнение имеет один корень.
+//let a : Double = 1
+//let b : Double = -6
+//let c : Double = 9
+
+// Коэффициенты для проверки. Уравнение не имеет действительных кореней.
+//let a : Double = 5
+//let b : Double = 3
+//let c : Double = 7
+
+print("Вычисление корней квадратного уравнения \(a)x2 + \(b)x + \(c) = 0")
+
+let roots = squareEquationSolver(coefficientA: a, coefficientB: b, coefficientC: c)
+
+switch roots.count {
+case 2:
+    print("Уравнение имеет два различных корня:")
+    print("x1 = \(roots[0])\nx2 = \(roots[1])")
+case 1:
+    print("Уравнение имеет один корень:")
+    print("x1 = \(roots[0])")
+default:
+    print("Уравнение не имеет действительных корней.")
+}
 
 
 
