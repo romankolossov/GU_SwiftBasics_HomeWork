@@ -9,7 +9,7 @@ import UIKit
 // Решение квадратного уравнения.
 //
 /*
-func squareEquationSolver(coefficientA a : Double, coefficientB b: Double, coefficientC c : Double) -> (Double?, Double?) {
+func squareEquationSolver(coefficientA a : Double, coefficientB b: Double, coefficientC c : Double) -> (x1: Double?, x2: Double?) {
     
     var x1, x2 : Double?
     
@@ -65,23 +65,24 @@ let roots = squareEquationSolver(coefficientA: a, coefficientB: b, coefficientC:
 //}
 
 
-if (roots.0 != nil) && (roots.1 != nil) {
+if (roots.x1 != nil) && (roots.x2 != nil) {
     print("Уравнение имеет два различных корня:")
-    print("x1 = \(roots.0!)\nx2 = \(roots.1!)")
-} else if (roots.0 != nil) && (roots.1 == nil) {
+    print("x1 = \(roots.x1!)\nx2 = \(roots.x2!)")
+} else if (roots.x1 != nil) && (roots.x2 == nil) {
     print("Уравнение имеет один корень:")
-    print("x1 = \(roots.0!)")
-} else if (roots.0 == nil) && (roots.1 == nil) {
+    print("x1 = \(roots.x1!)")
+} else if (roots.x1 == nil) && (roots.x2 == nil) {
     print("Уравнение не имеет действительных корней.")
 }
-
+ 
 */
+
 
 
 // MARK: Задание 1. Работа над ошибками.
 // Решение квадратного уравнения.
 //
-
+/*
 func squareEquationSolver(coefficientA a : Double, coefficientB b: Double, coefficientC c : Double) -> [Double] {
     
     let discriminant = pow(b, Double(2)) - 4 * a * c
@@ -128,9 +129,74 @@ case 1:
 default:
     print("Уравнение не имеет действительных корней.")
 }
+*/
 
 
 
+// MARK: Задание 1. Решение с использованием перечислений со связанными значениями.
+// Решение квадратного уравнения.
+//
+enum SquareEquationResults {
+    case twoRoots(x1 : Double, x2 : Double)
+    case oneRoot(x1 : Double)
+    case noRealRoots(error : String)
+}
+
+func squareEquationSolver(coefficientA a : Double, coefficientB b: Double, coefficientC c : Double) -> SquareEquationResults {
+    
+    var x1, x2 : Double
+    
+    let discriminant = pow(b, Double(2)) - 4 * a * c
+    
+    if (a == 0) {
+        x1 = -(c / b)
+        return .oneRoot(x1: x1)
+    } else if (discriminant > 0) {
+        x1 = (-b + sqrt(discriminant)) / (2 * a)
+        x2 = (-b - sqrt(discriminant)) / (2 * a)
+        return .twoRoots(x1: x1, x2: x2)
+    } else if (discriminant == 0) {
+        x1 = -(b / (2 * a))
+        return .oneRoot(x1: x1)
+    } else {
+        return .noRealRoots(error: "Уравнение не имеет действительных кореней.")
+    }
+}
+
+
+// Ввод коэффициентов квадратного уравнения ax2 + bx + c = 0
+// Коэффициенты для проверки. Уравнение имеет два различных корня.
+let a : Double = 5
+let b : Double = 88
+let c : Double = 8
+
+// Коэффициенты для проверки. Уравнение имеет один корень.
+//let a : Double = 1
+//let b : Double = -6
+//let c : Double = 9
+
+// Коэффициенты для проверки. Уравнение не имеет действительных кореней.
+//let a : Double = 5
+//let b : Double = 3
+//let c : Double = 7
+
+print("Вычисление корней квадратного уравнения \(a)x2 + \(b)x + \(c) = 0")
+
+let roots = squareEquationSolver(coefficientA: a, coefficientB: b, coefficientC: c)
+
+switch roots {
+case let .twoRoots(rootOne, rootTwo) :
+    print("Уравнение имеет два различных корня:")
+    print("x1 = \(rootOne)\nx2 = \(rootTwo)")
+case let .oneRoot(rootOne) :
+    print("Уравнение имеет один корень:")
+    print("x1 = \(rootOne)")
+case let .noRealRoots(message) :
+    print(message)
+}
+
+
+ 
 // MARK: Задание 2
 //Даны катеты прямоугольного треугольника.
 //Найти площадь, периметр и гипотенузу треугольника.
