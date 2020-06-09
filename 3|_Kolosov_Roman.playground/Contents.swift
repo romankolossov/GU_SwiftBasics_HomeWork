@@ -1,22 +1,22 @@
 import UIKit
 
 
-enum vehiculeType : String {
+enum VehiculeType : String {
     case car = "Легковой автомобиль"
     case truck = "Грузовая машина"
 }
 
-enum vehiculeEngineState : String {
+enum VehiculeEngineState : String {
     case engineOn = "Двигатель включен"
     case engineOff = "Двигатель заглушен"
 }
 
-enum vehiculeWindowsState : String {
+enum VehiculeWindowsState : String {
     case open = "Окна открыты"
     case closed = "Окна закрыты"
 }
 
-enum vehiculeCargoMode {
+enum VehiculeCargoMode {
     case load(weight: Int)
     case unload(weight: Int)
 }
@@ -24,7 +24,7 @@ enum vehiculeCargoMode {
 
 struct Vehicule {
     
-    let type : vehiculeType
+    let type : VehiculeType
     let manufacturer : String
     let yearOfManufacture : Int
     let payload : Int
@@ -46,7 +46,7 @@ struct Vehicule {
         }
     }
     
-    var engineState : vehiculeEngineState {
+    var engineState : VehiculeEngineState {
         willSet {
             if newValue == .engineOn  {
                 print("Двигатель сейчас включится")
@@ -56,7 +56,7 @@ struct Vehicule {
         }
     }
     
-    var windowsState : vehiculeWindowsState {
+    var windowsState : VehiculeWindowsState {
         didSet {
             if oldValue == .open {
                 print("Окна закрылись")
@@ -83,7 +83,7 @@ struct Vehicule {
         self.windowsState = .closed
     }
     
-    mutating func cargoLoad(mode: vehiculeCargoMode) {
+    mutating func cargoLoad(mode: VehiculeCargoMode) {
         switch mode {
         case let .load(weight):
             guard weight >= 0 else {
@@ -109,7 +109,7 @@ struct Vehicule {
     }
     
     
-    init?(type: vehiculeType, payload: Int, wheelRadius: Double) {
+    init?(type: VehiculeType, payload: Int, wheelRadius: Double) {
         
         guard payload >= 0, wheelRadius >= 0 else {
             return nil
@@ -126,7 +126,7 @@ struct Vehicule {
         self.windowsState = .closed
     }
     
-    init?(type: vehiculeType, manufacturer: String, yearOfManufacture: Int, mileage: Double, wheelRadius: Double, payload: Int, weightLoaded: Int, engineState: vehiculeEngineState, windowsState: vehiculeWindowsState) {
+    init?(type: VehiculeType, manufacturer: String, yearOfManufacture: Int, mileage: Double, wheelRadius: Double, payload: Int, weightLoaded: Int, engineState: VehiculeEngineState, windowsState: VehiculeWindowsState) {
         
         guard yearOfManufacture >= 1900, payload >= 0, wheelRadius >= 0, weightLoaded >= 0 else {
             return nil
