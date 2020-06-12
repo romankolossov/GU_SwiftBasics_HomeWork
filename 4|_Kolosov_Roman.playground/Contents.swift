@@ -63,7 +63,7 @@ class Car {
     private(set) static var carCount = 0
     
     static func countInfo() {
-        print("\nВыпущено \(self.carCount) автомобилей")
+        print("Выпущено всего \(self.carCount) автомобилей")
     }
     
     init?(manufacturer: String, yearOfManufacture: Int, mileage: Double, wheelRadius: Double, weightLoaded: Int, engineState: carEngineState, windowsState: carWindowsState) {
@@ -111,7 +111,7 @@ class Car {
         case let .toLoad(weight):
             print("Машина готова к погрузке \(weight) кг.")
         case let .toUnload(weight):
-            print("Машина готова к разгрузке \(weight) кг..")
+            print("Машина готова к выгрузке \(weight) кг..")
         }
     }
 }
@@ -120,13 +120,23 @@ class Car {
 
 final class SportCar : Car {
     
-    let trunkVolume : Int
+    let bootVolume : Int
+    private(set) static var sportCarCount = 0
+    
+    static func sportCarCountInfo () {
+        print("Выпущено \(self.sportCarCount) спорткаров")
+    }
     
     init?(manufacturer: String, yearOfManufacture: Int, mileage: Double, wheelRadius: Double, trunkVolume: Int, weightLoaded: Int, engineState: carEngineState, windowsState: carWindowsState) {
         
-        self.trunkVolume = trunkVolume
+        self.bootVolume = trunkVolume
         
         super.init(manufacturer: manufacturer, yearOfManufacture: yearOfManufacture, mileage: mileage, wheelRadius: wheelRadius, weightLoaded: weightLoaded, engineState: engineState, windowsState: windowsState)
+        
+        SportCar.sportCarCount += 1
+    }
+    deinit {
+        SportCar.sportCarCount -= 1
     }
     
     convenience init?(manufacturer: String, trunkVolume: Int) {
@@ -134,7 +144,7 @@ final class SportCar : Car {
     }
     
     override func cargoLoad(mode: carCargoMode) {
-        print("В спорткаре есть багажник для перевозки ручной клади объемом \(trunkVolume) литров.")
+        print("В спорткаре есть багажник для перевозки ручной клади объемом \(bootVolume) литра.")
     }
 }
 
@@ -143,10 +153,10 @@ final class SportCar : Car {
 final class TruckCar : Car {
     
     let payload : Int
-    private(set) static var trunkCount = 0
+    private(set) static var truсkCount = 0
     
-    static func trunkCountInfo () {
-        print("Выпущено \(trunkCount) грузовых автомобилей.")
+    static func truckCountInfo () {
+        print("Выпущено \(self.truсkCount) грузовых машин")
     }
     
     init?(manufacturer: String, yearOfManufacture: Int, mileage: Double, wheelRadius: Double, payload: Int, weightLoaded: Int, engineState: carEngineState, windowsState: carWindowsState) {
@@ -155,10 +165,10 @@ final class TruckCar : Car {
         
         super.init(manufacturer: manufacturer, yearOfManufacture: yearOfManufacture, mileage: mileage, wheelRadius: wheelRadius, weightLoaded: weightLoaded, engineState: engineState, windowsState: windowsState)
         
-        TruckCar.trunkCount += 1
+        TruckCar.truсkCount += 1
     }
     deinit {
-        TruckCar.trunkCount -= 1
+        TruckCar.truсkCount -= 1
     }
     
     convenience init?(manufacturer: String, payload: Int) {
@@ -197,6 +207,18 @@ final class TruckCar : Car {
 }
 
 
+func ordinaryCarCount() {
+    let numberOfOrdinaryCarsIssued = Car.carCount - SportCar.sportCarCount - TruckCar.truсkCount
+    print("Выпущено обычных легковых машин: ", numberOfOrdinaryCarsIssued)
+}
+
+func foo() -> Car? {
+    let fooDefaultCar : Car? = Car(manufacturer: "BMW")
+    print("inside foo info: Выпущено всего \(Car.carCount) автомобилей")
+    return fooDefaultCar
+}
+
+
 
 var defaultCar : Car? = Car(manufacturer: "Mercedes-Benz")
 
@@ -211,10 +233,34 @@ if let defaultCar1 = defaultCar {
     print(defaultCar1.windowsState.rawValue)
 }
 
+print("")
 defaultCar?.cargoLoad(mode: .toLoad(weight: 100))
 defaultCar?.startEngine()
 defaultCar?.openWindows()
+
+print("")
 Car.countInfo()
+ordinaryCarCount()
+print("")
+
+
+// MARK: Николай здравствуйте! Разбираю Ваш пример с урока. Не могу понять - после каждого вызова foo увеличивается количество машин и после завершения foo их количество не уменьшается и обратится к ним невозможно. Здесь memory cycle? foo ссылается на Car, а Car ссылается на foo? как из него выйти? или я что-то не так делаю?
+print("\nВопрос по работе функции, возвращающей тип Car? :\n")
+foo()
+foo()
+Car.countInfo()
+
+print("")
+var defaulCar2 : Car? = foo()
+Car.countInfo()
+
+defaulCar2 = nil
+
+print("")
+Car.countInfo()
+ordinaryCarCount()
+//---------------------------------------------------------------------------------
+
 
 
 var defaultSportCar : SportCar? = SportCar(manufacturer: "Tesla", trunkVolume: 745)
@@ -225,26 +271,29 @@ if let defaultSportCar1 = defaultSportCar {
     print("Пробег: \(defaultSportCar1.mileage) km.")
     print("Радиус дисков: R\(defaultSportCar1.wheelRadius)")
     print("Диаметр дисков: D\(defaultSportCar1.wheelDiameter)")
-    print("Объем багажника: \(defaultSportCar1.trunkVolume) литра.")
+    print("Объем багажника: \(defaultSportCar1.bootVolume) литра.")
     print("Загрузка багажника: \(defaultSportCar1.weightLoaded) кг.")
     print(defaultSportCar1.engineState.rawValue)
     print(defaultSportCar1.windowsState.rawValue)
 }
 
+print("")
 defaultSportCar?.cargoLoad(mode: .toLoad(weight: 0))
 defaultSportCar?.startEngine()
 defaultSportCar?.openWindows()
 defaultSportCar?.stopEngine()
 defaultSportCar?.closeWindows()
-print("\nВыпущено \(Car.carCount) автомобилей.")
+
+print("")
+Car.countInfo()
 
 
 var anotherSportCar : SportCar? = SportCar(manufacturer: "Porsche", trunkVolume: 132)
 
-if let defaultSportCar1 = anotherSportCar {
-    print("\n\nДругая базовая модель спорткара: ", defaultSportCar1.manufacturer)
-    print("Радиус дисков: R\(defaultSportCar1.wheelRadius)")
-    print("Диаметр дисков: D\(defaultSportCar1.wheelDiameter)")
+if let anotherSportCar1 = anotherSportCar {
+    print("\n\nДругая базовая модель спорткара: ", anotherSportCar1.manufacturer)
+    print("Радиус дисков: R\(anotherSportCar1.wheelRadius)")
+    print("Диаметр дисков: D\(anotherSportCar1.wheelDiameter)")
 }
 
 anotherSportCar?.wheelRadius = 22.5
@@ -252,140 +301,96 @@ anotherSportCar?.cargoLoad(mode: .toUnload(weight: 0))
 anotherSportCar?.startEngine()
 anotherSportCar?.openWindows()
 
-if let defaultSportCar1 = anotherSportCar {
-    print("\nMодель спорткара: ", defaultSportCar1.manufacturer)
-    print("Радиус дисков: R\(defaultSportCar1.wheelRadius)")
-    print("Диаметр дисков: D\(defaultSportCar1.wheelDiameter)")
-    print(defaultSportCar1.engineState.rawValue)
-    print(defaultSportCar1.windowsState.rawValue)
+if let anotherSportCar1 = anotherSportCar {
+    print("\nСменили диски, открыли окна и запустили двигатель у спорткара: ", anotherSportCar1.manufacturer)
+    print("Новый радиус дисков: R\(anotherSportCar1.wheelRadius)")
+    print("Новый диаметр дисков: D\(anotherSportCar1.wheelDiameter)")
+    print(anotherSportCar1.engineState.rawValue)
+    print(anotherSportCar1.windowsState.rawValue)
 }
 
+print("")
 Car.countInfo()
+
 defaultSportCar = anotherSportCar
 Car.countInfo()
+
 anotherSportCar = nil
 
+SportCar.sportCarCountInfo()
+ordinaryCarCount()
+
 if let defaultSportCar1 = defaultSportCar {
-    print("\nБазовая модель спорткара: ", defaultSportCar1.manufacturer)
+    print("\n\nНовая базовая модель спорткара: ", defaultSportCar1.manufacturer)
     print("Радиус дисков: R\(defaultSportCar1.wheelRadius)")
     print("Диаметр дисков: D\(defaultSportCar1.wheelDiameter)")
-    print("Объем багажника: \(defaultSportCar1.trunkVolume) литра.")
+    print("Объем багажника: \(defaultSportCar1.bootVolume) литра.")
     print(defaultSportCar1.engineState.rawValue)
     print(defaultSportCar1.windowsState.rawValue)
 }
 
 
 
+var defaultTruck : TruckCar? = TruckCar(manufacturer: "MAN", payload: 20000)
+
+if let defaultTruck1 = defaultTruck {
+    print("\n\nБазовая модель грузовика: ", defaultTruck1.manufacturer)
+    print("Год выпуска: ", defaultTruck1.yearOfManufacture)
+    print("Пробег: \(defaultTruck1.mileage) km")
+    print("Радиус дисков: R\(defaultTruck1.wheelRadius)")
+    print("Диаметр дисков: D\(defaultTruck1.wheelDiameter)")
+    print("Грузоподъемность: \(defaultTruck1.payload) кг.")
+    print("Загружено: \(defaultTruck1.weightLoaded) кг.")
+    print(defaultTruck1.engineState.rawValue)
+    print(defaultTruck1.windowsState.rawValue)
+}
+
+print("\nПогрузка грузовой машины \(defaultTruck?.manufacturer ?? "noname"):")
+defaultTruck?.cargoLoad(mode: .toUnload(weight: 500))
+defaultTruck?.cargoLoad(mode: .toLoad(weight: 11000))
+print("Загружено: ", defaultTruck?.weightLoaded ?? 0)
+defaultTruck?.cargoLoad(mode: .toLoad(weight: 15000))
+print("Загружено: ", defaultTruck?.weightLoaded ?? 0)
+
+print("")
+TruckCar.truckCountInfo()
+
+
+var anotherTruck : TruckCar? = defaultTruck
+TruckCar.truckCountInfo()
+
+print("")
+anotherTruck?.startEngine()
+anotherTruck?.openWindows()
+
+print("\nСостояние грузовой машины \(defaultTruck?.manufacturer ?? "noname"):")
+print(defaultTruck?.engineState.rawValue ?? "Статус двигателя не определен")
+print(defaultTruck?.windowsState.rawValue ?? "Состояние окон не определено")
+
+
+anotherTruck = TruckCar(manufacturer: "Scania", payload: 25000)
+
+print("")
+TruckCar.truckCountInfo()
+
+if let anotherTruck1 = anotherTruck {
+    print("\n\nДругая базовая модель грузовика: ", anotherTruck1.manufacturer)
+    print("Год выпуска: ", anotherTruck1.yearOfManufacture)
+    print("Пробег: \(anotherTruck1.mileage) km")
+    print("Радиус дисков: R\(anotherTruck1.wheelRadius)")
+    print("Диаметр дисков: D\(anotherTruck1.wheelDiameter)")
+    print("Грузоподъемность: \(anotherTruck1.payload) кг.")
+    print("Загружено: \(anotherTruck1.weightLoaded) кг.")
+    print(anotherTruck1.engineState.rawValue)
+    print(anotherTruck1.windowsState.rawValue)
+}
+
+
+print("")
+Car.countInfo()
+SportCar.sportCarCountInfo()
+TruckCar.truckCountInfo()
+ordinaryCarCount()
 
 
 
-
-//var bmwCar = Vehicule(type: .car, manufacturer: "BMW", yearOfManufacture: 2019, mileage:  20000, wheelRadius: 19, payload: 300, weightLoaded: 50, engineState: .engineOn, windowsState: .open)
-//
-//var anotherBMWCar = bmwCar
-//anotherBMWCar?.wheelRadius = 22.5
-//
-//if let bmwCar1 = bmwCar {
-//    print("\n\n\(bmwCar1.type.rawValue):")
-//    print("Модель: ", bmwCar1.manufacturer)
-//    print("Год выпуска: ", bmwCar1.yearOfManufacture)
-//    print("Пробег: \(bmwCar1.mileage) km")
-//    print("Радиус дисков: R\(bmwCar1.wheelRadius)")
-//    print("Диаметр дисков: D\(bmwCar1.wheelDiameter)")
-//    print("Вместительность багажника: \(bmwCar1.payload) кг.")
-//    print("Загрузка багажника: \(bmwCar1.weightLoaded) кг.")
-//    print(bmwCar1.engineState.rawValue)
-//    print(bmwCar1.windowsState.rawValue)
-//}
-//
-//print("\nПогрузка легковой машины BMW:")
-//bmwCar?.cargoLoad(mode: .load(weight: 80))
-//bmwCar?.cargoLoad(mode: .load(weight: 100))
-//bmwCar?.cargoLoad(mode: .load(weight: 250))
-//bmwCar?.cargoLoad(mode: .unload(weight: 250))
-//bmwCar?.cargoLoad(mode: .unload(weight: 50))
-//
-//print("\nДействия с машиной BMW:")
-//bmwCar?.closeWindows()
-//bmwCar?.stopEngine()
-//bmwCar?.mileage = 20100
-//
-//print("\nДругой легковой автомобиль BMW:")
-//anotherBMWCar?.mileage = 20300
-//
-//if let bmwCar1 = bmwCar {
-//    print("\n\(bmwCar1.type.rawValue):")
-//    print("Модель: ", bmwCar1.manufacturer)
-//    print("Год выпуска: ", bmwCar1.yearOfManufacture)
-//    print("Пробег: \(bmwCar1.mileage) km")
-//    print("Радиус дисков: R\(bmwCar1.wheelRadius)")
-//    print("Диаметр дисков: D\(bmwCar1.wheelDiameter)")
-//    print("Загрузка багажника: \(bmwCar1.weightLoaded) кг.")
-//    print(bmwCar1.engineState.rawValue)
-//    print(bmwCar1.windowsState.rawValue)
-//}
-//
-//if let bmwCar1 = anotherBMWCar {
-//    print("\nДругой \(bmwCar1.type.rawValue):")
-//    print("Модель: ", bmwCar1.manufacturer)
-//    print("Год выпуска: ", bmwCar1.yearOfManufacture)
-//    print("Пробег: \(bmwCar1.mileage) km")
-//    print("Радиус дисков: R\(bmwCar1.wheelRadius)")
-//    print("Диаметр дисков: D\(bmwCar1.wheelDiameter)")
-//    print("Загрузка багажника: \(bmwCar1.weightLoaded) кг.")
-//    print(bmwCar1.engineState.rawValue)
-//    print(bmwCar1.windowsState.rawValue)
-//}
-//
-//
-//
-//var defaultTruck = Vehicule(type: .truck, payload: 36000, wheelRadius: 22.5)
-//
-//if let defaultTruck1 = defaultTruck {
-//    print("\n\nБазовая \(defaultTruck1.type.rawValue).")
-//    print("Модель: ", defaultTruck1.manufacturer)
-//    print("Год выпуска: ", defaultTruck1.yearOfManufacture)
-//    print("Пробег: \(defaultTruck1.mileage) km")
-//    print("Радиус дисков: R\(defaultTruck1.wheelRadius)")
-//    print("Диаметр дисков: D\(defaultTruck1.wheelDiameter)")
-//    print("Грузоподъемность: \(defaultTruck1.payload) кг.")
-//    print("Загружено: \(defaultTruck1.weightLoaded) кг.")
-//    print(defaultTruck1.engineState.rawValue)
-//    print(defaultTruck1.windowsState.rawValue)
-//}
-//
-//var mercedesTruck = Vehicule(type: .truck, manufacturer: "Mercedes-Benz", yearOfManufacture: 2018, mileage: 200000, wheelRadius: 22.5, payload: 25000, weightLoaded: 10000, engineState: .engineOff, windowsState: .closed)
-//
-//if let mercedesTruck1 = mercedesTruck {
-//    print("\n\n\(mercedesTruck1.type.rawValue):")
-//    print("Модель: ", mercedesTruck1.manufacturer)
-//    print("Год выпуска: ", mercedesTruck1.yearOfManufacture)
-//    print("Пробег: \(mercedesTruck1.mileage) km")
-//    print("Радиус дисков: R\(mercedesTruck1.wheelRadius)")
-//    print("Диаметр дисков: D\(mercedesTruck1.wheelDiameter)")
-//    print("Грузоподъемность: \(mercedesTruck1.payload) кг.")
-//    print("Загружено: \(mercedesTruck1.weightLoaded) кг.")
-//    print(mercedesTruck1.engineState.rawValue)
-//    print(mercedesTruck1.windowsState.rawValue)
-//}
-//
-//print("\nПогрузка фуры Mercedes-Benz:")
-//mercedesTruck?.cargoLoad(mode: .load(weight: 25000))
-//mercedesTruck?.cargoLoad(mode: .unload(weight: 15000))
-//mercedesTruck?.cargoLoad(mode: .load(weight: 8000))
-//
-//print("\nДействия с фурой Mercedes-Benz:")
-//mercedesTruck?.openWindows()
-//mercedesTruck?.startEngine()
-//mercedesTruck?.mileage = 200600
-//
-//if let mercedesTruck1 = mercedesTruck {
-//    print("\n\(mercedesTruck1.type.rawValue):")
-//    print("Модель: ", mercedesTruck1.manufacturer)
-//    print("Год выпуска: ", mercedesTruck1.yearOfManufacture)
-//    print("Пробег: \(mercedesTruck1.mileage) km")
-//    print("Загружено: \(mercedesTruck1.weightLoaded) кг.")
-//    print(mercedesTruck1.engineState.rawValue)
-//    print(mercedesTruck1.windowsState.rawValue)
-//}
-//
