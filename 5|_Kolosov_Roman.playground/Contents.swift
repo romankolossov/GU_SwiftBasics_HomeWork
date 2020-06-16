@@ -149,10 +149,11 @@ extension Car: Hashable {
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(enginePower)
+        hasher.combine(mileage)
         hasher.combine(wheelRadius)
     }
     //    var hashValue: Int {
-    //        let hashBase = enginePower * wheelRadius
+    //        let hashBase = enginePower * wheelRadius * mileage
     //        return hashBase.hashValue
     //    }
 }
