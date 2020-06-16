@@ -66,6 +66,86 @@ extension CarManufacturable {
 
 
 
+class Car: CarManufacturable {
+    
+    let manufacturer: String
+    let yearOfManufacture: Int
+    var enginePower: Double
+    var weightLoaded: Int
+    var wheelRadius : Double
+    
+    private(set) static var carCount: Int = 0
+    
+    var description: String {
+        let descriptionMessage: String = manufacturer + " "
+            + String(yearOfManufacture) + " года выпуска.\nМощность двигателя: \(enginePower) л.с., пробег: \(mileage) km."
+        return descriptionMessage
+    }
+    
+    var mileage: Double {
+        didSet {
+            let distance = mileage - oldValue
+            print("Пройден участок пути \(round(distance * 100) / 100) km.")
+        }
+    }
+
+    var engineState : carEngineState {
+        willSet {
+            if newValue == .engineOn  {
+                print("Двигатель готов к включению")
+            } else {
+                print("Двигатель готов выключению")
+            }
+        }
+        didSet {
+            if oldValue == .engineOff {
+                print("Двигатель включился")
+            }
+            else {
+                print("Двигатель выключился")
+            }
+        }
+    }
+
+    var windowsState : carWindowsState {
+        didSet {
+            if oldValue == .open {
+                print("Окна закрылись")
+            } else {
+                print("Окна открылись")
+            }
+        }
+    }
+    
+    
+    init?(manufacturer: String, yearOfManufacture: Int, enginePower: Double, mileage: Double, wheelRadius: Double, weightLoaded: Int, engineState: carEngineState, windowsState: carWindowsState) {
+
+        guard yearOfManufacture >= 1900, enginePower >= 0, wheelRadius >= 0, weightLoaded >= 0 else {
+            return nil
+        }
+
+        self.manufacturer = manufacturer
+        self.yearOfManufacture = yearOfManufacture
+        self.enginePower = enginePower
+        self.mileage = mileage
+        self.wheelRadius = wheelRadius
+        self.weightLoaded = weightLoaded
+        self.engineState = engineState
+        self.windowsState = windowsState
+        Car.carCount += 1
+    }
+    
+    deinit {
+        Car.carCount -= 1
+    }
+
+    convenience init?(manufacturer: String) {
+        self.init(manufacturer: manufacturer, yearOfManufacture: 2020, enginePower: 180, mileage: 0, wheelRadius: 18, weightLoaded: 0, engineState: .engineOff, windowsState: .closed)
+    }
+}
+
+
+
 extension Car {
     
     func startEngine() {
@@ -160,9 +240,45 @@ extension Car: Hashable {
 
 
 
+final class SportCar : Car {
+
+    let bootVolume : Int
+    
+    init?(manufacturer: String, yearOfManufacture: Int, enginePower: Double, mileage: Double, wheelRadius: Double, trunkVolume: Int, weightLoaded: Int, engineState: carEngineState, windowsState: carWindowsState) {
+
+        self.bootVolume = trunkVolume
+
+        super.init(manufacturer: manufacturer, yearOfManufacture: yearOfManufacture, enginePower: enginePower, mileage: mileage, wheelRadius: wheelRadius, weightLoaded: weightLoaded, engineState: engineState, windowsState: windowsState)
+    }
+
+    convenience init?(manufacturer: String, trunkVolume: Int) {
+        self.init(manufacturer: manufacturer, yearOfManufacture: 2020, enginePower: 362, mileage: 0, wheelRadius: 20, trunkVolume: trunkVolume, weightLoaded: 0, engineState: .engineOff, windowsState: .closed)
+    }
+}
+
+
+
 extension SportCar {
     func cargoLoad(mode: carCargoMode) {
         print("В спорткаре есть багажник для перевозки ручной клади объемом \(bootVolume) литра.")
+    }
+}
+
+
+
+final class TruckCar : Car {
+
+    let payload : Int
+
+    init?(manufacturer: String, yearOfManufacture: Int, enginePower: Double, mileage: Double,  wheelRadius: Double, payload: Int, weightLoaded: Int, engineState: carEngineState, windowsState: carWindowsState) {
+
+        self.payload = payload
+
+        super.init(manufacturer: manufacturer, yearOfManufacture: yearOfManufacture, enginePower: enginePower, mileage: mileage, wheelRadius: wheelRadius, weightLoaded: weightLoaded, engineState: engineState, windowsState: windowsState)
+    }
+
+    convenience init?(manufacturer: String, payload: Int) {
+        self.init(manufacturer: manufacturer, yearOfManufacture: 2020, enginePower: 430, mileage: 0, wheelRadius: 22.5, payload: payload, weightLoaded: 0, engineState: .engineOff, windowsState: .closed)
     }
 }
 
@@ -198,122 +314,6 @@ extension TruckCar {
                 print("Вы не можете выгрузить \(weight) кг., в машине находится: \(weightLoaded) кг. груза.")
             }
         }
-    }
-}
-
-
-
-class Car: CarManufacturable {
-    
-    let manufacturer: String
-    let yearOfManufacture: Int
-    var enginePower: Double
-    var weightLoaded: Int
-    var wheelRadius : Double
-    
-    private(set) static var carCount: Int = 0
-    
-    var description: String {
-        let descriptionMessage: String = manufacturer + " "
-            + String(yearOfManufacture) + " года выпуска.\nМощность двигателя: \(enginePower) л.с., пробег: \(mileage) km."
-        return descriptionMessage
-    }
-    
-    var mileage: Double {
-        didSet {
-            let distance = mileage - oldValue
-            print("Пройден участок пути \(round(distance * 100) / 100) km.")
-        }
-    }
-
-    var engineState : carEngineState {
-        willSet {
-            if newValue == .engineOn  {
-                print("Двигатель готов к включению")
-            } else {
-                print("Двигатель готов выключению")
-            }
-        }
-        didSet {
-            if oldValue == .engineOff {
-                print("Двигатель включился")
-            }
-            else {
-                print("Двигатель выключился")
-            }
-        }
-    }
-
-    var windowsState : carWindowsState {
-        didSet {
-            if oldValue == .open {
-                print("Окна закрылись")
-            } else {
-                print("Окна открылись")
-            }
-        }
-    }
-    
-    
-    init?(manufacturer: String, yearOfManufacture: Int, enginePower: Double, mileage: Double, wheelRadius: Double, weightLoaded: Int, engineState: carEngineState, windowsState: carWindowsState) {
-
-        guard yearOfManufacture >= 1900, enginePower >= 0, wheelRadius >= 0, weightLoaded >= 0 else {
-            return nil
-        }
-
-        self.manufacturer = manufacturer
-        self.yearOfManufacture = yearOfManufacture
-        self.enginePower = enginePower
-        self.mileage = mileage
-        self.wheelRadius = wheelRadius
-        self.weightLoaded = weightLoaded
-        self.engineState = engineState
-        self.windowsState = windowsState
-        Car.carCount += 1
-    }
-    
-    deinit {
-        Car.carCount -= 1
-    }
-
-    convenience init?(manufacturer: String) {
-        self.init(manufacturer: manufacturer, yearOfManufacture: 2020, enginePower: 180, mileage: 0, wheelRadius: 18, weightLoaded: 0, engineState: .engineOff, windowsState: .closed)
-    }
-}
-
-
-
-final class SportCar : Car {
-
-    let bootVolume : Int
-    
-    init?(manufacturer: String, yearOfManufacture: Int, enginePower: Double, mileage: Double, wheelRadius: Double, trunkVolume: Int, weightLoaded: Int, engineState: carEngineState, windowsState: carWindowsState) {
-
-        self.bootVolume = trunkVolume
-
-        super.init(manufacturer: manufacturer, yearOfManufacture: yearOfManufacture, enginePower: enginePower, mileage: mileage, wheelRadius: wheelRadius, weightLoaded: weightLoaded, engineState: engineState, windowsState: windowsState)
-    }
-
-    convenience init?(manufacturer: String, trunkVolume: Int) {
-        self.init(manufacturer: manufacturer, yearOfManufacture: 2020, enginePower: 362, mileage: 0, wheelRadius: 20, trunkVolume: trunkVolume, weightLoaded: 0, engineState: .engineOff, windowsState: .closed)
-    }
-}
-
-
-
-final class TruckCar : Car {
-
-    let payload : Int
-
-    init?(manufacturer: String, yearOfManufacture: Int, enginePower: Double, mileage: Double,  wheelRadius: Double, payload: Int, weightLoaded: Int, engineState: carEngineState, windowsState: carWindowsState) {
-
-        self.payload = payload
-
-        super.init(manufacturer: manufacturer, yearOfManufacture: yearOfManufacture, enginePower: enginePower, mileage: mileage, wheelRadius: wheelRadius, weightLoaded: weightLoaded, engineState: engineState, windowsState: windowsState)
-    }
-
-    convenience init?(manufacturer: String, payload: Int) {
-        self.init(manufacturer: manufacturer, yearOfManufacture: 2020, enginePower: 430, mileage: 0, wheelRadius: 22.5, payload: payload, weightLoaded: 0, engineState: .engineOff, windowsState: .closed)
     }
 }
 
