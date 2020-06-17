@@ -44,6 +44,17 @@ class Queue<T: PerimeterCalculatable>: CustomStringConvertible {
         return totalPerimeter
     }
     
+    func filter (filterRule: (T) -> Bool) -> [T] {
+        var temporaryArray: [T] = []
+        for element in elements {
+            if filterRule(element) {
+                temporaryArray.append(element)
+            }
+        }
+        return temporaryArray
+    }
+        
+    
     subscript(index: Int) -> T? {
         get {
             guard index < elements.count else {
@@ -89,7 +100,7 @@ class Circle: PerimeterCalculatable {
 
 extension Circle: CustomStringConvertible {
     var description: String {
-        "Круг радиусом \(radius), периметром \(perimeter)"
+        "Круг радиусом \(radius) и периметром \(perimeter)"
     }
 }
 
@@ -118,9 +129,11 @@ class Rectangle: PerimeterCalculatable {
 
 extension Rectangle: CustomStringConvertible {
     var description: String {
-        "Прямоугольник со сторонами \(sideA) и \(sideB), периметром \(perimeter)"
+        "Прямоугольник со сторонами \(sideA) и \(sideB) и периметром \(perimeter)"
     }
 }
+
+
 
 
 
@@ -132,7 +145,6 @@ queueCircle.Enqueue(Circle(radius: 20))
 queueCircle.Enqueue(Circle(radius: 30))
 queueCircle.Enqueue(Circle(radius: 40))
 
-print(queueCircle.description, "\n")
 queueCircle.listOfElements()
 print("")
 
@@ -140,10 +152,21 @@ queueCircle[20]
 queueCircle[5] = Circle(radius: 88)
 queueCircle[3] = Circle(radius: 88)
 
-print("")
-queueCircle.listOfElements()
-
 //print(queueCircle[1, 2])
+
+print("\n\nФункции высшего порядка")
+
+let isEvenCirclePerimeter: (Circle) -> Bool = { Int($0.perimeter) % 2 == 0 }
+let isOddCirclePerimeter: (Circle) -> Bool = { Int($0.perimeter) % 2 != 0 }
+let perimeterIsMoreThan: (Circle) -> Bool = { Int($0.perimeter) > 150 }
+
+print("В очереди находятся:")
+print("Окружности с четной целой частью периметра:\n \(queueCircle.filter(filterRule: isEvenCirclePerimeter))")
+print("Окружности с нечетной целой частью периметра:\n \(queueCircle.filter(filterRule: isOddCirclePerimeter))")
+print("Окружности с периметром больше 50:\n \(queueCircle.filter(filterRule: perimeterIsMoreThan))")
+
+print("\n\n")
+queueCircle.listOfElements()
 
 print("\nСуммарный периметр окружностей: \(queueCircle.totalPerimeter())\n")
 
@@ -153,6 +176,8 @@ for _ in 0...(queueCircle.count - 1) {
     element?.printDescription()
 }
 
+print("\nПосле извлечения элементов в очереди не осталось:")
+print(queueCircle.description)
 
 
 let queueRectangle: Queue = Queue<Rectangle>()
@@ -174,14 +199,34 @@ for _ in 0...(queueRectangle.count - 1) {
 }
 
 
-
-var arrayOfCircles: [Circle] = (1...10).map( { Circle(radius: Double($0)) } )
-
-//var arrayOfCircles: [Circle] = (1...10).map( {element -> Circle in
+print("\n\nФункции высшего порядка (продолжение)")
+let arrayOfCircles: [Circle] = (1...11).map{ Circle(radius: Double($0)) }
+//let arrayOfCircles: [Circle] = (1...10).map( {element -> Circle in
 //    let transformedElement = Circle(radius: Double(element))
 //    return transformedElement
 //} )
 
-//let isEven: (Int) -> Bool = { $0 % 2 == 0 }
-//let isOdd: (Int) -> Bool = { $0 % 2 != 0 }
+let evenArrayOfCircles: [Circle] = arrayOfCircles.filter(isEvenCirclePerimeter)
+print("\nМассив окружностей с четной целой частью периметра:\n\(evenArrayOfCircles)")
 
+let oddArrayOfCircles: [Circle] = arrayOfCircles.filter(isOddCirclePerimeter)
+print("\nМассив окружностей с нечетной целой частью периметра:\n\(oddArrayOfCircles)")
+
+
+let anotherEvenArrayOfCircles: [Circle] = (1...11).compactMap{ element -> Circle? in
+    let circle = Circle(radius: Double(element))
+    if  Int(circle.perimeter) % 2 == 0 {
+        return circle
+    }
+    else {
+        return nil
+    }
+}
+
+print("\nДругой массив окружностей с четной целой частью периметра:\n\(anotherEvenArrayOfCircles)")
+
+
+let arrayOfRectangles: [Rectangle] = (1...11).map{ Rectangle(sideA: Double($0), sideB: Double($0)) }
+
+let filteredArrayOfRectangles: [Rectangle] = arrayOfRectangles.filter{ $0.perimeter > 30 }
+print("\n\nМассив квадратов с периметром больше 30:\n\(filteredArrayOfRectangles)")
