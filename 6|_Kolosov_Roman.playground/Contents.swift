@@ -36,12 +36,12 @@ class Queue<T: PerimeterCalculatable>: CustomStringConvertible {
         }
     }
     
-    func totalPerimeter() -> Double{
+    func totalPerimeter() {
         var totalPerimeter: Double = 0
         for element in elements {
             totalPerimeter += element.perimeter
         }
-        return totalPerimeter
+        print("Сумарный периметр: \(totalPerimeter)")
     }
     
     func filter (filterRule: (T) -> Bool) -> [T] {
@@ -68,13 +68,13 @@ class Queue<T: PerimeterCalculatable>: CustomStringConvertible {
         }
     }
     
-    //    subscript(indeces: Int ...) -> Double {
-    //        var summaryPerimeter: Double = 0
-    //        for index in indeces where index < elements.count {
-    //            summaryPerimeter += elements[index].perimeter
-    //        }
-    //        return summaryPerimeter
-    //    }
+    subscript(indeces: Int ...) -> Double {
+        var summaryPerimeter: Double = 0
+        for index in indeces where index < elements.count {
+            summaryPerimeter += elements[index].perimeter
+        }
+        return summaryPerimeter
+    }
 }
 
 
@@ -152,7 +152,10 @@ queueCircle[20]
 queueCircle[5] = Circle(radius: 88)
 queueCircle[3] = Circle(radius: 88)
 
-//print(queueCircle[1, 2])
+print("\n\nСуммарный периметр окружностей в очереди, вычисленный через subscript:")
+print(queueCircle[0, 1, 2, 3])
+print("Вычисление суммарного периметра окружностей в очереди методом класса Queue:")
+queueCircle.totalPerimeter()
 
 print("\n\nФункции высшего порядка")
 
@@ -230,3 +233,4 @@ let arrayOfRectangles: [Rectangle] = (1...11).map{ Rectangle(sideA: Double($0), 
 
 let filteredArrayOfRectangles: [Rectangle] = arrayOfRectangles.filter{ $0.perimeter > 30 }
 print("\n\nМассив квадратов с периметром больше 30:\n\(filteredArrayOfRectangles)")
+
