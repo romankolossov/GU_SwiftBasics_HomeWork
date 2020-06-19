@@ -16,18 +16,21 @@ class Queue<T: PerimeterCalculatable>: CustomStringConvertible {
         return elements.count
     }
     
+    var description: String {
+        return "\(elements)"
+    }
+    
+    
     func Enqueue(_ element: T) {
         elements.append(element)
     }
+    
     
     func Dequeue() -> T? {
         guard elements.count > 0 else { print("Очередь пуста"); return nil }
         return elements.removeFirst()
     }
     
-    var description: String {
-        return "\(elements)"
-    }
     
     func listOfElements() {
         print("Текущее положение элементов типа \(T.self) в очереди:")
@@ -36,6 +39,7 @@ class Queue<T: PerimeterCalculatable>: CustomStringConvertible {
         }
     }
     
+    
     func totalPerimeter() {
         var totalPerimeter: Double = 0
         for element in elements {
@@ -43,6 +47,7 @@ class Queue<T: PerimeterCalculatable>: CustomStringConvertible {
         }
         print("Сумарный периметр: \(totalPerimeter)")
     }
+    
     
     func filter (filterRule: (T) -> Bool) -> [T] {
         var temporaryArray: [T] = []
@@ -53,7 +58,7 @@ class Queue<T: PerimeterCalculatable>: CustomStringConvertible {
         }
         return temporaryArray
     }
-        
+    
     
     subscript(index: Int) -> T? {
         get {
@@ -68,6 +73,7 @@ class Queue<T: PerimeterCalculatable>: CustomStringConvertible {
         }
     }
     
+    
     subscript(indeces: Int ...) -> Double {
         var summaryPerimeter: Double = 0
         for index in indeces where index < elements.count {
@@ -79,13 +85,9 @@ class Queue<T: PerimeterCalculatable>: CustomStringConvertible {
 
 
 
-class Circle: PerimeterCalculatable {
+class Circle {
     
     var radius: Double
-    
-    var perimeter: Double {
-        return round(2 * Double.pi * radius * 100) / 100
-    }
     
     func printDescription() {
         print(description)
@@ -98,6 +100,14 @@ class Circle: PerimeterCalculatable {
 
 
 
+extension Circle: PerimeterCalculatable {
+    var perimeter: Double {
+           return round(2 * Double.pi * radius * 100) / 100
+       }
+}
+
+
+
 extension Circle: CustomStringConvertible {
     var description: String {
         "Круг радиусом \(radius) и периметром \(perimeter)"
@@ -106,14 +116,10 @@ extension Circle: CustomStringConvertible {
 
 
 
-class Rectangle: PerimeterCalculatable {
+class Rectangle {
     
     var sideA: Double
     var sideB: Double
-    
-    var perimeter: Double {
-        return round((sideA + sideB) * 2 * 100) / 100
-    }
     
     func printDescription() {
         print(description)
@@ -122,6 +128,14 @@ class Rectangle: PerimeterCalculatable {
     init(sideA: Double, sideB: Double) {
         self.sideA = sideA
         self.sideB = sideB
+    }
+}
+
+
+
+extension Rectangle: PerimeterCalculatable {
+    var perimeter: Double {
+        return round((sideA + sideB) * 2 * 100) / 100
     }
 }
 
@@ -171,9 +185,7 @@ print("Окружности с периметром больше 50:\n \(queueCi
 print("\n\n")
 queueCircle.listOfElements()
 
-print("\nСуммарный периметр окружностей: \(queueCircle.totalPerimeter())\n")
-
-print("Извлечение окружностей из очереди:")
+print("\nИзвлечение окружностей из очереди:")
 for _ in 0...(queueCircle.count - 1) {
     let element = queueCircle.Dequeue()
     element?.printDescription()
@@ -193,17 +205,20 @@ queueRectangle.Enqueue(Rectangle(sideA: 10, sideB: 40))
 print("\n\n")
 queueRectangle.listOfElements()
 
-print("\nСуммарный периметр прямоугольников: \(queueRectangle.totalPerimeter())\n")
+print("\n\nСуммарный периметр прямоугольников в очереди, вычисленный через subscript:")
+print(queueRectangle[0, 1, 2, 3])
+print("Вычисление суммарного периметра прямоугольников в очереди методом класса Queue:")
+queueRectangle.totalPerimeter()
 
-print("Извлечение прямоугольников из очереди:")
+print("\nИзвлечение прямоугольников из очереди:")
 for _ in 0...(queueRectangle.count - 1) {
     let element = queueRectangle.Dequeue()
     element?.printDescription()
 }
 
 
-print("\n\nФункции высшего порядка (продолжение)")
-let arrayOfCircles: [Circle] = (1...11).map{ Circle(radius: Double($0)) }
+print("\n\nФункции высшего порядка (чтобы попрактиковаться)")
+let arrayOfCircles: [Circle] = (1...10).map{ Circle(radius: Double($0)) }
 //let arrayOfCircles: [Circle] = (1...10).map( {element -> Circle in
 //    let transformedElement = Circle(radius: Double(element))
 //    return transformedElement
@@ -216,7 +231,7 @@ let oddArrayOfCircles: [Circle] = arrayOfCircles.filter(isOddCirclePerimeter)
 print("\nМассив окружностей с нечетной целой частью периметра:\n\(oddArrayOfCircles)")
 
 
-let anotherEvenArrayOfCircles: [Circle] = (1...11).compactMap{ element -> Circle? in
+let anotherEvenArrayOfCircles: [Circle] = (1...10).compactMap{ element -> Circle? in
     let circle = Circle(radius: Double(element))
     if  Int(circle.perimeter) % 2 == 0 {
         return circle
@@ -229,8 +244,16 @@ let anotherEvenArrayOfCircles: [Circle] = (1...11).compactMap{ element -> Circle
 print("\nДругой массив окружностей с четной целой частью периметра:\n\(anotherEvenArrayOfCircles)")
 
 
-let arrayOfRectangles: [Rectangle] = (1...11).map{ Rectangle(sideA: Double($0), sideB: Double($0)) }
+let arrayOfRectangles: [Rectangle] = (1...10).map{ Rectangle(sideA: Double($0), sideB: Double($0 * 3)) }
 
-let filteredArrayOfRectangles: [Rectangle] = arrayOfRectangles.filter{ $0.perimeter > 30 }
-print("\n\nМассив квадратов с периметром больше 30:\n\(filteredArrayOfRectangles)")
+let filteredArrayOfRectangles: [Rectangle] = arrayOfRectangles.filter{ $0.perimeter > 50 }
+print("\n\nМассив прямоугольников с периметром больше 50:\n\(filteredArrayOfRectangles)")
+
+
+let totalRadiusOfRectangles = arrayOfRectangles.reduce(0.0) { (result, rectangle) -> Double in return result + rectangle.perimeter }
+print("\nСуммарный периметр прямоугольников, вычисленный через reduce: \(totalRadiusOfRectangles)\n")
+
+let sortedArrayOfRectangles = arrayOfRectangles.sorted(by:) {$0.perimeter > $1.perimeter}
+
+sortedArrayOfRectangles.forEach { print($0) }
 
