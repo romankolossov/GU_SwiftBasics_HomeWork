@@ -183,43 +183,23 @@ extension Car: CustomStringConvertible {
 extension Car: Comparable {
 
     static func < (lhs: Car, rhs: Car) -> Bool {
-        if ( (lhs.enginePower * lhs.wheelRadius) < (rhs.enginePower * rhs.wheelRadius) ) {
-            return true
-        } else {
-            return false
-        }
+        return (lhs.enginePower * lhs.wheelRadius) < (rhs.enginePower * rhs.wheelRadius)
     }
 
     static func <= (lhs: Car, rhs: Car) -> Bool {
-        if ( (lhs.enginePower * lhs.wheelRadius) <= (rhs.enginePower * rhs.wheelRadius) ) {
-            return true
-        } else {
-            return false
-        }
+        return (lhs.enginePower * lhs.wheelRadius) <= (rhs.enginePower * rhs.wheelRadius)
     }
 
     static func > (lhs: Car, rhs: Car) -> Bool {
-        if ( (lhs.enginePower * lhs.wheelRadius) > (rhs.enginePower * rhs.wheelRadius) ) {
-            return true
-        } else {
-            return false
-        }
+        return (lhs.enginePower * lhs.wheelRadius) > (rhs.enginePower * rhs.wheelRadius)
     }
 
     static func >= (lhs: Car, rhs: Car) -> Bool {
-        if ( (lhs.enginePower * lhs.wheelRadius) >= (rhs.enginePower * rhs.wheelRadius) ) {
-            return true
-        } else {
-            return false
-        }
+        return (lhs.enginePower * lhs.wheelRadius) >= (rhs.enginePower * rhs.wheelRadius)
     }
 
     static func == (lhs: Car, rhs: Car) -> Bool {
-        if ( (lhs.enginePower * lhs.wheelRadius) == (rhs.enginePower * rhs.wheelRadius) ) {
-            return true
-        } else {
-            return false
-        }
+        return (lhs.enginePower * lhs.wheelRadius) == (rhs.enginePower * rhs.wheelRadius)
     }
 }
 
