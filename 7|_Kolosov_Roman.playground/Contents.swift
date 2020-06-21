@@ -203,11 +203,13 @@ class VendingMachine {
     
     var vendor: SalesMakeable?
     
+    
     func insertCoin(coinsDeposited: Int) {
         guard vendor != nil else { print("Внести монеты невозможно. Продавец не определен"); return }
         guard coinsDeposited >= 0 else { print("Неверный номинал монет"); return }
         vendor?.coinsDeposited += coinsDeposited
     }
+    
     
     func getChange() -> Int {
         guard vendor != nil else { return 0 }
@@ -215,6 +217,26 @@ class VendingMachine {
         let change = vendor?.coinsDeposited ?? 0
         vendor?.coinsDeposited = 0
         return change
+    }
+    
+    
+    func pressBuyButton(itemForSale: String ) {
+        
+        guard vendor != nil else { print("Продажа товара \(itemForSale) невозможна. Продавец не определен"); return }
+        
+        do {
+            if let product = try vendor?.shouldVend(itemForSale: itemForSale) {
+                print("Возьмите пожалуйста \(product.productName)")
+            }
+        } catch VendingMachineError.invalidSelection {
+            print("Товара \(itemForSale) не существует")
+        } catch VendingMachineError.outOfStock {
+            print("Товар \(itemForSale) временно отсутствует в продаже")
+        } catch VendingMachineError.insufficienFunds(let coinsNeeded) {
+            print("Внесенная сумма недостаточна. Необходимо внести \(coinsNeeded) монет")
+        } catch let error {
+            print(error.localizedDescription)
+        }
     }
     
     
@@ -232,26 +254,6 @@ class VendingMachine {
             print("\(person), вашего любимого товара не существует в базе")
         } catch VendingMachineError.outOfStock {
             print("\(person), ваш любимый товар временно отсутствует в продаже")
-        } catch VendingMachineError.insufficienFunds(let coinsNeeded) {
-            print("Внесенная сумма недостаточна. Необходимо внести \(coinsNeeded) монет")
-        } catch let error {
-            print(error.localizedDescription)
-        }
-    }
-    
-    
-    func pressBuyButton(itemForSale: String ) {
-        
-        guard vendor != nil else { print("Продажа товара \(itemForSale) невозможна. Продавец не определен"); return }
-        
-        do {
-            if let product = try vendor?.shouldVend(itemForSale: itemForSale) {
-                print("Возьмите пожалуйста \(product.productName)")
-            }
-        } catch VendingMachineError.invalidSelection {
-            print("Товара \(itemForSale) не существует")
-        } catch VendingMachineError.outOfStock {
-            print("Товар \(itemForSale) временно отсутствует в продаже")
         } catch VendingMachineError.insufficienFunds(let coinsNeeded) {
             print("Внесенная сумма недостаточна. Необходимо внести \(coinsNeeded) монет")
         } catch let error {
