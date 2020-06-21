@@ -11,6 +11,13 @@ enum VendingMachineError: Error {
 
 
 
+enum BuyerError: Error {
+    
+    case buyerNotFound
+}
+
+
+
 struct ItemInStock {
     
     var price: Int
@@ -33,6 +40,8 @@ protocol SalesMakeable {
     
     func shouldVend(itemForSale item: String) throws -> ProductSpecification
     
+    func shouldVendFavoriteProduct(to person: String) throws -> ProductSpecification
+    
     func vend(itemForSale item: String) -> (ProductSpecification?, VendingMachineError?)
 }
 
@@ -45,6 +54,13 @@ class ColdDrinkVendor: SalesMakeable {
         "Pepsi" : ItemInStock(price: 30, count: 3, productSpec: ProductSpecification(productName: "Pepsi Cherry")),
         "Fanta" : ItemInStock(price: 20, count: 2, productSpec: ProductSpecification(productName: "Fanta Zero"))
     ]
+    
+    let favoriteDrink: [String : String] = [
+        "Roman" : "Cola",
+        "Alice" : "Fanta",
+        "John" : "Pepsi"
+    ]
+    
     
     var coinsDeposited: Int = 0
     
@@ -70,6 +86,14 @@ class ColdDrinkVendor: SalesMakeable {
         inventory[itemKeyWord] = newItem
         
         return newItem.productSpec
+    }
+    
+    
+    func shouldVendFavoriteProduct(to person: String) throws -> ProductSpecification {
+        
+        guard let drinkName = favoriteDrink[person] else { throw BuyerError.buyerNotFound }
+        
+        return try shouldVend(itemForSale: drinkName)
     }
     
     
@@ -107,6 +131,13 @@ class SweetsVendor: SalesMakeable {
         "KitKat" : ItemInStock(price: 20, count: 2, productSpec: ProductSpecification(productName: "KitKat Maxi"))
     ]
     
+    let favoriteSweet: [String : String] = [
+        "Roman" : "KitKat",
+        "Alice" : "Mars",
+        "John" : "Snickers"
+    ]
+    
+    
     var coinsDeposited: Int = 0
     
     
@@ -131,6 +162,14 @@ class SweetsVendor: SalesMakeable {
         inventory[itemKeyWord] = newItem
         
         return newItem.productSpec
+    }
+    
+    
+    func shouldVendFavoriteProduct(to person: String) throws -> ProductSpecification {
+        
+        guard let sweetName = favoriteSweet[person] else { throw BuyerError.buyerNotFound }
+        
+        return try shouldVend(itemForSale: sweetName)
     }
     
     
@@ -176,6 +215,28 @@ class VendingMachine {
         let change = vendor?.coinsDeposited ?? 0
         vendor?.coinsDeposited = 0
         return change
+    }
+    
+    
+    func pressBuyFavoriteProductButton(for person: String) {
+        
+        guard vendor != nil else { print("Продажа товара невозможна. Продавец не определен"); return }
+        
+        do {
+            if let product = try vendor?.shouldVendFavoriteProduct(to: person) {
+                print("\(person), возьмите пожалуйста ваш любимый продукт \(product.productName)")
+            }
+        } catch BuyerError.buyerNotFound {
+            print("Покупатель \(person) не найден")
+        } catch VendingMachineError.invalidSelection {
+            print("\(person), вашего любимого товара не существует в базе")
+        } catch VendingMachineError.outOfStock {
+            print("\(person), ваш любимый товар временно отсутствует в продаже")
+        } catch VendingMachineError.insufficienFunds(let coinsNeeded) {
+            print("Внесенная сумма недостаточна. Необходимо внести \(coinsNeeded) монет")
+        } catch let error {
+            print(error.localizedDescription)
+        }
     }
     
     
@@ -232,15 +293,24 @@ class VendingMachine {
 
 let vendingMachine = VendingMachine()
 
-print("Проверка обработки ошибок оператором try/catch:\n")
+print("Проверка обработки ошибок оператором try/catch:")
 
+print("\nКогда продавец не определен:")
 vendingMachine.insertCoin(coinsDeposited: 10)
 print("Ваша сдача: \(vendingMachine.getChange()) монет")
 vendingMachine.pressBuyButton(itemForSale: "Fanta")
 
+print("\nОпредили продавца напитков")
 vendingMachine.vendor = ColdDrinkVendor()
 
-print("")
+print("\nПродажа любимого напитка:")
+vendingMachine.pressBuyFavoriteProductButton(for: "Timothy")
+vendingMachine.pressBuyFavoriteProductButton(for: "Roman")
+vendingMachine.insertCoin(coinsDeposited: 60)
+vendingMachine.pressBuyFavoriteProductButton(for: "Roman")
+print("Ваша сдача: \(vendingMachine.getChange()) монет")
+
+print("\nПопытка продажи несуществующего напитка:")
 vendingMachine.pressBuyButton(itemForSale: "Ice Tea")
 
 print("")
@@ -256,10 +326,23 @@ vendingMachine.pressBuyButton(itemForSale: "Fanta")
 print("Ваша сдача: \(vendingMachine.getChange()) монет")
 
 
-print("\n\nПроверка обработки ошибок, вернувшихся в кортеже:\n")
-
+print("\n\nОпредили продавца сладостей")
 vendingMachine.vendor = SweetsVendor()
 
+print("\nПродажа любимых сладостей:")
+vendingMachine.pressBuyFavoriteProductButton(for: "Timothy")
+vendingMachine.pressBuyFavoriteProductButton(for: "Roman")
+vendingMachine.insertCoin(coinsDeposited: 60)
+vendingMachine.pressBuyFavoriteProductButton(for: "Roman")
+print("Ваша сдача: \(vendingMachine.getChange()) монет")
+
+print("\nПопытка продажи несуществующей сладости:")
+vendingMachine.pressBuyButton(itemForSale: "Picnic")
+
+
+print("\n\nПроверка обработки ошибок, вернувшихся в кортеже:\n")
+
+print("Попытка продажи несуществующей сладости:")
 vendingMachine.pressOptionalBuyButton(itemForSale: "Nuts")
 
 print("")
@@ -270,6 +353,5 @@ vendingMachine.pressOptionalBuyButton(itemForSale: "KitKat")
 print("Ваша сдача: \(vendingMachine.getChange()) монет\n")
 
 vendingMachine.insertCoin(coinsDeposited: 40)
-vendingMachine.pressOptionalBuyButton(itemForSale: "KitKat")
 vendingMachine.pressOptionalBuyButton(itemForSale: "KitKat")
 print("Ваша сдача: \(vendingMachine.getChange()) монет")
