@@ -15,6 +15,9 @@
 		C8031BA924A367B700B4344F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C8031BA724A367B700B4344F /* LaunchScreen.storyboard */; };
 		C8031BB424A367B700B4344F /* ___Kolosov_Roman_SnakeGameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8031BB324A367B700B4344F /* ___Kolosov_Roman_SnakeGameTests.swift */; };
 		C8031BBF24A3887400B4344F /* Apple.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8031BBE24A3887400B4344F /* Apple.swift */; };
+		C8031BC124A3BFDE00B4344F /* SnakeBodyPart.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8031BC024A3BFDE00B4344F /* SnakeBodyPart.swift */; };
+		C8031BC324A3C3D100B4344F /* SnakeHead.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8031BC224A3C3D100B4344F /* SnakeHead.swift */; };
+		C8031BC524A3C5A500B4344F /* Snake.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8031BC424A3C5A500B4344F /* Snake.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +43,9 @@
 		C8031BB324A367B700B4344F /* ___Kolosov_Roman_SnakeGameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "___Kolosov_Roman_SnakeGameTests.swift"; sourceTree = "<group>"; };
 		C8031BB524A367B700B4344F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C8031BBE24A3887400B4344F /* Apple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Apple.swift; sourceTree = "<group>"; };
+		C8031BC024A3BFDE00B4344F /* SnakeBodyPart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnakeBodyPart.swift; sourceTree = "<group>"; };
+		C8031BC224A3C3D100B4344F /* SnakeHead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnakeHead.swift; sourceTree = "<group>"; };
+		C8031BC424A3C5A500B4344F /* Snake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snake.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,9 +92,12 @@
 				C8031BA024A367B400B4344F /* GameViewController.swift */,
 				C8031BA224A367B400B4344F /* Main.storyboard */,
 				C8031BA524A367B700B4344F /* Assets.xcassets */,
-				C8031BBE24A3887400B4344F /* Apple.swift */,
 				C8031BA724A367B700B4344F /* LaunchScreen.storyboard */,
 				C8031BAA24A367B700B4344F /* Info.plist */,
+				C8031BBE24A3887400B4344F /* Apple.swift */,
+				C8031BC024A3BFDE00B4344F /* SnakeBodyPart.swift */,
+				C8031BC224A3C3D100B4344F /* SnakeHead.swift */,
+				C8031BC424A3C5A500B4344F /* Snake.swift */,
 			);
 			path = "8|_Kolosov_Roman_SnakeGame";
 			sourceTree = "<group>";
@@ -203,9 +212,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8031BC324A3C3D100B4344F /* SnakeHead.swift in Sources */,
 				C8031BBF24A3887400B4344F /* Apple.swift in Sources */,
 				C8031B9F24A367B400B4344F /* GameScene.swift in Sources */,
 				C8031BA124A367B400B4344F /* GameViewController.swift in Sources */,
+				C8031BC124A3BFDE00B4344F /* SnakeBodyPart.swift in Sources */,
+				C8031BC524A3C5A500B4344F /* Snake.swift in Sources */,
 				C8031B9924A367B400B4344F /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

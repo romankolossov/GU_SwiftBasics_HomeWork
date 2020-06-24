@@ -12,6 +12,7 @@ import GameplayKit
 class GameScene: SKScene {
     private let counterClockWiseButtonName = "counterClockWiseButton"
     private let clockWiseButtonName = "clockWiseButton"
+    private var snake: Snake?
     private var label : SKLabelNode?
     
     override func didMove(to view: SKView) {
@@ -21,13 +22,21 @@ class GameScene: SKScene {
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         self.physicsBody?.allowsRotation = false
         
-        let counterClockWisePosition = CGPoint(x: frame.minX + 30, y: frame.minY + 30)
-        let clockWisePosition = CGPoint(x: frame.maxX - 80, y: frame.minY + 30)
+        let counterClockWiseButtonPosition = CGPoint(x: frame.minX + 30, y: frame.minY + 30)
+        let clockWiseButtonPosition = CGPoint(x: frame.maxX - 80, y: frame.minY + 30)
         
-        addControlButton(name: counterClockWiseButtonName, position: counterClockWisePosition)
-        addControlButton(name: clockWiseButtonName, position: clockWisePosition)
+        addControlButton(name: counterClockWiseButtonName, position: counterClockWiseButtonPosition)
+        addControlButton(name: clockWiseButtonName, position: clockWiseButtonPosition)
+        
+        snake = Snake(position: CGPoint(x: frame.midX, y: frame.midY))
+        addChild(snake!)
         
         createApple()
+        
+        //physicsWorld.contactDelegate = self
+        
+        //physicsBody?.contactTestBitMask
+        //physicsBody?.collisionBitMask
        
     }
     

@@ -20,5 +20,6 @@ class Apple: SKShapeNode {
         self.position = position
         
         physicsBody = SKPhysicsBody(circleOfRadius: 10, center: CGPoint(x: 5, y: 5))
+        //physicsBody?.categoryBitMask
     }
 }
