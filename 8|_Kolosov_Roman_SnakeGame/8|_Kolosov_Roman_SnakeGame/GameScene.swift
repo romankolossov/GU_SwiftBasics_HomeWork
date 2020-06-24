@@ -9,6 +9,13 @@
 import SpriteKit
 import GameplayKit
 
+struct CollisionCategories {
+    static let Snake: UInt32 = 1
+    static let SnakeHead: UInt32 = 1 << 1
+    static let Apple: UInt32 = 1 << 2
+    static let EdgeBody: UInt32 = 1 << 3
+}
+
 class GameScene: SKScene {
     private let counterClockWiseButtonName = "counterClockWiseButton"
     private let clockWiseButtonName = "clockWiseButton"
@@ -33,11 +40,10 @@ class GameScene: SKScene {
         
         createApple()
         
-        //physicsWorld.contactDelegate = self
+        physicsWorld.contactDelegate = self
         
-        //physicsBody?.contactTestBitMask
-        //physicsBody?.collisionBitMask
-       
+        physicsBody?.categoryBitMask = CollisionCategories.EdgeBody
+        physicsBody?.collisionBitMask = CollisionCategories.Snake | CollisionCategories.SnakeHead
     }
     
     private func addControlButton(name: String, position: CGPoint) {
@@ -100,5 +106,26 @@ class GameScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         snake?.move()
+    }
+}
+
+extension GameScene: SKPhysicsContactDelegate {
+    func didBegin(_ contact: SKPhysicsContact) {
+        let bytes = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
+        
+        let collisionObject = bytes ^ CollisionCategories.SnakeHead
+        
+        switch collisionObject {
+        case CollisionCategories.Apple:
+            let apple = contact.bodyA.node is Apple ? contact.bodyA.node : contact.bodyB.node
+            snake?.addBodyPart()
+            apple?.removeFromParent()
+            createApple()
+        case CollisionCategories.EdgeBody:
+            snake?.moveClockWise()
+        default:
+            break
+        }
+        
     }
 }
