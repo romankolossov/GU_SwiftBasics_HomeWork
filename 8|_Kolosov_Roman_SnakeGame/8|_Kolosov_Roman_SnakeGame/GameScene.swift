@@ -69,9 +69,11 @@ class GameScene: SKScene {
             
             if touchedNode.name == clockWiseButtonName {
                 touchedNode.fillColor = .green
+                snake?.moveClockWise()
             }
             else if touchedNode.name == counterClockWiseButtonName {
                 touchedNode.fillColor = .green
+                snake?.moveConterClockWise()
             }
         }
     }
@@ -97,5 +99,6 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+        snake?.move()
     }
 }
