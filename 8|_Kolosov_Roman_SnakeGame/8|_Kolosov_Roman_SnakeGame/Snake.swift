@@ -37,6 +37,10 @@ class Snake: SKShapeNode {
         angle -= CGFloat.pi / 2
     }
     
+    func moveFromEdgeBody() {
+        angle += CGFloat.pi
+    }
+    
     func move() {
         moveHead(body[0])
         
