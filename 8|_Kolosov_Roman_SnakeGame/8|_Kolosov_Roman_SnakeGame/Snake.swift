@@ -37,8 +37,13 @@ class Snake: SKShapeNode {
         angle -= CGFloat.pi / 2
     }
     
-    func moveFromEdgeBody() {
-        angle += CGFloat.pi
+    func moveAwayFromEdgeBody() {
+        angle += CGFloat.pi * 0.75
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3/4), execute: {
+            // Put your code which should be executed with a delay here
+            self.angle += CGFloat.pi * 0.25
+        })
     }
     
     func move() {

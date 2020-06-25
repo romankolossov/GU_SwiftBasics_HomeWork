@@ -122,7 +122,7 @@ extension GameScene: SKPhysicsContactDelegate {
             apple?.removeFromParent()
             createApple()
         case CollisionCategories.EdgeBody:
-            snake?.moveFromEdgeBody()
+            snake?.moveAwayFromEdgeBody()
         default:
             break
         }
