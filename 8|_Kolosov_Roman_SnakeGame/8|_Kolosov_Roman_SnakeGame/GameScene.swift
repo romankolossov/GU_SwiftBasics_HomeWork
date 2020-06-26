@@ -19,8 +19,14 @@ struct CollisionCategories {
 class GameScene: SKScene {
     private let counterClockWiseButtonName = "counterClockWiseButton"
     private let clockWiseButtonName = "clockWiseButton"
+    private let restartButtonName = "restartGameButton"
     private var snake: Snake?
-    private var label : SKLabelNode?
+    private var scoreLabel: SKLabelNode?
+    private var scores: Int = 0 {
+        didSet {
+            scoreLabel?.text = String(scores)
+        }
+    }
     
     override func didMove(to view: SKView) {
         backgroundColor = .black
@@ -31,9 +37,23 @@ class GameScene: SKScene {
         
         let counterClockWiseButtonPosition = CGPoint(x: frame.minX + 30, y: frame.minY + 30)
         let clockWiseButtonPosition = CGPoint(x: frame.maxX - 80, y: frame.minY + 30)
+        let restartButtonPosition = CGPoint(x: frame.midX - 22, y: frame.minY + 30)
+        let restartLabelPosition = CGPoint(x: frame.midX, y: frame.minY + 95)
+        let scoreLabelTextPosition = CGPoint(x: frame.midX, y: frame.maxY - 60)
         
         addControlButton(name: counterClockWiseButtonName, position: counterClockWiseButtonPosition)
         addControlButton(name: clockWiseButtonName, position: clockWiseButtonPosition)
+        addControlButton(name: restartButtonName, position: restartButtonPosition)
+        
+        addLabel(text: "Restart Game", position: restartLabelPosition)
+        addLabel(text: "Apples eaten:", position: scoreLabelTextPosition)
+        
+        scoreLabel = SKLabelNode()
+        scoreLabel?.position = CGPoint(x: frame.midX, y: frame.maxY - 80)
+        scoreLabel?.text = "0"
+        scoreLabel?.fontColor = .red
+        scoreLabel?.fontSize = 20
+        addChild(scoreLabel!)
         
         snake = Snake(position: CGPoint(x: frame.midX, y: frame.midY))
         addChild(snake!)
@@ -58,6 +78,16 @@ class GameScene: SKScene {
         addChild(button)
     }
     
+    private func addLabel(text: String, position: CGPoint) {
+        let label = SKLabelNode()
+        
+        label.text = text
+        label.position = position
+        label.fontColor = .red
+        label.fontSize = 20
+        addChild(label)
+    }
+    
     private func createApple() {
         let randX = CGFloat.random(in: 0..<frame.maxX - 5)
         let randY = CGFloat.random(in: 0..<frame.maxY - 5)
@@ -80,6 +110,11 @@ class GameScene: SKScene {
             else if touchedNode.name == counterClockWiseButtonName {
                 touchedNode.fillColor = .green
                 snake?.moveConterClockWise()
+            }
+            else if touchedNode.name == restartButtonName {
+                self.removeAllActions()
+                self.removeAllChildren()
+                view?.presentScene(scene)
             }
         }
     }
@@ -119,6 +154,7 @@ extension GameScene: SKPhysicsContactDelegate {
         case CollisionCategories.Apple:
             let apple = contact.bodyA.node is Apple ? contact.bodyA.node : contact.bodyB.node
             snake?.addBodyPart()
+            scores += 1
             apple?.removeFromParent()
             createApple()
         case CollisionCategories.EdgeBody:
