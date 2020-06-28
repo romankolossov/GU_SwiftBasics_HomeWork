@@ -112,6 +112,7 @@ class GameScene: SKScene {
                 snake?.moveConterClockWise()
             }
             else if touchedNode.name == restartButtonName {
+                scores = 0
                 self.removeAllActions()
                 self.removeAllChildren()
                 view?.presentScene(scene)
