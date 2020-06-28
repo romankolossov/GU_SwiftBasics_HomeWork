@@ -8,7 +8,8 @@ protocol PerimeterCalculatable {
 
 
 
-class Queue<T: PerimeterCalculatable>: CustomStringConvertible {
+//class Queue<T: PerimeterCalculatable>: CustomStringConvertible {
+class Queue<T>: CustomStringConvertible where T: PerimeterCalculatable {
     
     private var elements: [T] = []
     
@@ -57,6 +58,16 @@ class Queue<T: PerimeterCalculatable>: CustomStringConvertible {
             }
         }
         return temporaryArray
+    }
+    
+    
+    func map<U>(_ transformPredicate: (T) -> U) -> [U] {
+        var result = [U]()
+        for element in elements {
+            let transformedItem = transformPredicate(element)
+            result.append(transformedItem)
+        }
+        return result
     }
     
     
@@ -177,10 +188,14 @@ let isEvenCirclePerimeter: (Circle) -> Bool = { Int($0.perimeter) % 2 == 0 }
 let isOddCirclePerimeter: (Circle) -> Bool = { Int($0.perimeter) % 2 != 0 }
 let perimeterIsMoreThan: (Circle) -> Bool = { Int($0.perimeter) > 150 }
 
+let intValueMap: (Circle) -> Int = { Int($0.perimeter) }
+//let intValueMap: (Circle) -> Int = { (element: Circle) -> Int in return Int(element.perimeter) }
+
 print("В очереди находятся:")
 print("Окружности с четной целой частью периметра:\n \(queueCircle.filter(filterRule: isEvenCirclePerimeter))")
 print("Окружности с нечетной целой частью периметра:\n \(queueCircle.filter(filterRule: isOddCirclePerimeter))")
 print("Окружности с периметром больше 50:\n \(queueCircle.filter(filterRule: perimeterIsMoreThan))")
+print("Конвертация типа периметра окружностей Double в Int:\n \(queueCircle.map(intValueMap))")
 
 print("\n\n")
 queueCircle.listOfElements()
